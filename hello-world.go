@@ -53,6 +53,9 @@ func retrieve(ticket int, alleyA *node, alleyB *node) (*node, *node) {
   if(alleyA == nil) {
     return nil, nil
   }
+  // search while the current car isn't the one we're looking for
+  // and the car isn't the last in the alley.
+  // for each car we're not interested in, insert it into allyB.
   for alleyA.data != ticket && alleyA.next != nil {
     alleyA, car = remove(alleyA)
     alleyB = insert(alleyB, car.data)
@@ -61,17 +64,17 @@ func retrieve(ticket int, alleyA *node, alleyB *node) (*node, *node) {
     fmt.Println("B")
     printList(alleyB)
   }
+  // if we've found the correct car, return it
   if( alleyA.data == ticket) {
     fmt.Println("Found ", ticket)
     fmt.Println("A")
     printList(alleyA)
     fmt.Println("B")
     printList(alleyB)
-    // var putBack *node
-    // alleyB, putBack = remove(alleyA)
-    alleyA, _ = remove(alleyA)
+    alleyA, _ = remove(alleyA) // this effectively "drops" the item from the linked list
     fmt.Println("B")
     printList(alleyB)
+    // move contents of alleyB back into alleyA
     for alleyB != nil {
       var putBack *node
       alleyB, putBack = remove(alleyB)
@@ -80,6 +83,8 @@ func retrieve(ticket int, alleyA *node, alleyB *node) (*node, *node) {
     printList(alleyA)
     return alleyA, car
   } else {
+    // this is when the car wasn't found; move alleyB back into alleyA. 
+    // nil signifies the car wasn't found
     for alleyB != nil {
       alleyB, car = remove(alleyB)
       alleyA = insert(alleyA, car.data)
